@@ -13,7 +13,7 @@ c3p0的源码比较复杂，具体的实现逻辑还没看明白。后续再补�
 JDK：1.8.0_201  
 maven：3.6.1  
 IDE：Spring Tool Suites4 for Eclipse  
-mysql驱动：8.0.15
+mysql驱动：8.0.15  
 mysql：5.7 
 
 ### 主要步骤
@@ -77,7 +77,6 @@ CREATE TABLE `user` (
 路径：resources目录下
 注意：文件名必须是`c3p0-config.xml`
 ```xml
-#数据库配置
 <?xml version="1.0" encoding="UTF-8"?>
 <c3p0-config>
 	<default-config>
