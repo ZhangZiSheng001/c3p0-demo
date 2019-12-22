@@ -1,0 +1,24 @@
+@startuml
+class WrapperConnectionPoolDataSource{
+    ~ConnectionTester connectionTester
+    ~Map userOverrides
+}
+interface ConnectionPoolDataSource
+abstract class WrapperConnectionPoolDataSourceBase{
+    #PropertyChangeSupport pcs
+    #VetoableChangeSupport vcs
+    -DataSource nestedDataSource
+    -int maxPoolSize
+    -int minPoolSize
+    -int initialPoolSize
+    ·······
+    
+}
+interface IdentityTokenized
+class DriverManagerDataSource
+
+WrapperConnectionPoolDataSourceBase .up.|> IdentityTokenized
+WrapperConnectionPoolDataSource -up-|> WrapperConnectionPoolDataSourceBase
+WrapperConnectionPoolDataSource .up.|> ConnectionPoolDataSource
+DriverManagerDataSource -down-* WrapperConnectionPoolDataSourceBase
+@enduml

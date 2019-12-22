@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<Resource auth="Container"
+	          description="DB Connection"
+	          driverClass="com.mysql.cj.jdbc.Driver"
+	          maxPoolSize="4"
+	          minPoolSize="2"
+	          acquireIncrement="1"
+	          name="jdbc/pooledDS"
+	          user="root"
+	          password="root"
+	          factory="org.apache.naming.factory.BeanFactory"
+	          type="com.mchange.v2.c3p0.ComboPooledDataSource"
+	          jdbcUrl="jdbc:mysql://localhost:3306/github_demo?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=GMT%2B8&amp;useSSL=true" />
+</Context>

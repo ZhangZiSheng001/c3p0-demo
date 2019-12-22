@@ -1,0 +1,59 @@
+@startuml
+class C3P0PooledConnectionPoolManager{
+    ~ ResourcePoolFactory rpfact 
+    ~ Map<DbAuth,C3P0PooledConnectionPool> authsToPools
+    ~ ConnectionPoolDataSource cpds    
+    ~ Timertimer timer
+    ~ ThreadPoolAsynchronousRunner taskRunner
+    ~ ThreadPoolAsynchronousRunner deferredStatementDestroyer
+    + C3P0PooledConnectionPool getPool()
+    - C3P0PooledConnectionPool createPooledConnectionPool(DbAuth auth) 
+}
+class C3P0PooledConnectionPool{
+    ~ final ResourcePool rp
+    ~ final ConnectionEventListener cl
+    ~ final ConnectionTester connectionTester
+    ~ final AsynchronousRunner sharedTaskRunner
+    ~ final AsynchronousRunner deferredStatementDestroyer
+    +PooledConnection checkoutPooledConnection()
+    +void checkinPooledConnection(PooledConnection pcon)
+}
+class BasicResourcePool{
+    ~ Manager mgr
+    ~ BasicResourcePoolFactory factory
+    ~ ResourcePoolEventSupport rpes
+    ~ AsynchronousRunner taskRunner
+    ~ final RunnableQueue asyncEventQueue
+    ~ Timer cullAndIdleRefurbishTimer
+    ~ TimerTask cullTask
+    ~ TimerTask idleRefurbishTask
+    ~ HashSet acquireWaiters
+    ~ HashSet otherWaiters    
+    ~ HashMap  managed
+    ~ LinkedList unused
+    ~ HashSet  excluded
+    ~ Map formerResources
+    ~ Set idleCheckResources
+    +public Object checkoutResource()
+    +public void checkinResource( Object resc ) 
+}
+class PooledConnectionResourcePoolManager{
+    +Object acquireResource()
+    +void refurbishResourceOnCheckout( Object resc )
+    +void refurbishResourceOnCheckin( Object resc )
+    +void refurbishIdleResource( Object resc )
+    +void destroyResource(Object resc, boolean checked_out)
+    -void finerLoggingTestPooledConnection(Object resc, String testImpetus)
+    -void testPooledConnection(Object resc)
+}
+
+
+BasicResourcePool -down-* C3P0PooledConnectionPool
+C3P0PooledConnectionPool -up-> C3P0PooledConnectionPoolManager
+PooledConnectionResourcePoolManager -up-* BasicResourcePool
+PooledConnectionResourcePoolManager -left-> C3P0PooledConnectionPool
+note top of PooledConnectionResourcePoolManager
+<b>PooledConnectionResourcePoolManager</b>是
+<b>C3P0PooledConnectionPool</b>的内部类
+end note
+@enduml

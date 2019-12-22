@@ -1,0 +1,16 @@
+@startuml
+class DriverManagerDataSource{
+    ~Driver driver
+}
+abstract class DriverManagerDataSourceBase{
+    #PropertyChangeSupport pcs
+    #String driverClass
+    #String jdbcUrl
+}
+interface IdentityTokenized
+interface DataSource
+
+DriverManagerDataSourceBase .up.|> IdentityTokenized
+DriverManagerDataSource -up-|> DriverManagerDataSourceBase
+DriverManagerDataSource .up.|> DataSource
+@enduml

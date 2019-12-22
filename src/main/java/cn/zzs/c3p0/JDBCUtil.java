@@ -7,36 +7,45 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
- * @ClassName: JDBCUtil
- * @Description: 用于获取数据库连接对象的工具类
+ * 
+ * <p>用于获取数据库连接对象的工具类。</p>
+ * <p>这里使用ComboPooledDataSource获取连接对象，获取到的连接对象可满足一般的数据库操作</p>
  * @author: zzs
- * @date: 2019年8月31日 下午9:05:08
+ * @date: 2019年12月8日 上午10:13:16
  */
 public class JDBCUtil {
+
 	private static DataSource dataSource;
+
 	private static ThreadLocal<Connection> tl = new ThreadLocal<>();
-	private static Object obj = new Object();
-	
+
+	private static final Object obj = new Object();
+
+	private static final Log log = LogFactory.getLog(JDBCUtil.class);
+
 	static {
 		init();
 	}
+
 	/**
 	 * 
-	 * @Title: getConnection
-	 * @Description: 获取数据库连接对象的方法，线程安全
+	 * <p>获取数据库连接对象的方法，线程安全</p>
 	 * @author: zzs
 	 * @date: 2019年8月31日 下午9:22:29
 	 * @return: Connection
 	 */
-	public static Connection getConnection(){
-		//从当前线程中获取连接对象
+	public static Connection getConnection() throws SQLException {
+		// 从当前线程中获取连接对象
 		Connection connection = tl.get();
-		//判断为空的话，创建连接并绑定到当前线程
+		// 判断为空的话，创建连接并绑定到当前线程
 		if(connection == null) {
-			synchronized (obj) {
+			synchronized(obj) {
 				if(tl.get() == null) {
 					connection = createConnection();
 					tl.set(connection);
@@ -45,77 +54,115 @@ public class JDBCUtil {
 		}
 		return connection;
 	}
+
 	/**
 	 * 
-	 * @Title: release
-	 * @Description: 释放资源
+	 * <p>释放资源</p>
 	 * @author: zzs
 	 * @date: 2019年8月31日 下午9:39:24
 	 * @param conn
 	 * @param statement
 	 * @return: void
 	 */
-	public static void release(Connection conn,Statement statement,ResultSet resultSet) {
-		if(resultSet!=null) {
+	public static void release(Connection conn, Statement statement, ResultSet resultSet) {
+		if(resultSet != null) {
 			try {
 				resultSet.close();
-			} catch (SQLException e) {
-				System.err.println("关闭ResultSet对象异常");
-				e.printStackTrace();
+			} catch(SQLException e) {
+				log.error("关闭ResultSet对象异常", e);
 			}
 		}
 		if(statement != null) {
 			try {
 				statement.close();
-			} catch (SQLException e) {
-				System.err.println("关闭Statement对象异常");
-				e.printStackTrace();
+			} catch(SQLException e) {
+				log.error("关闭Statement对象异常", e);
 			}
 		}
-		//注意：这里不关闭连接
-		if(conn!=null) {
+		// 注意：这里不关闭连接
+		if(conn != null) {
 			try {
-				//如果连接失效的话，从当前线程的绑定中删除
-				if(!conn.isValid(3)) {
-					tl.remove();
-				}
-			} catch (SQLException e) {
-				System.err.println("校验连接有效性");
-				e.printStackTrace();
+				conn.close();
+				tl.remove();
+			} catch(SQLException e) {
+				log.error("关闭Connection对象异常", e);
 			}
 		}
 	}
-	
+
 	/**
 	 * 
-	 * @Title: createConnection
-	 * @Description: 创建数据库连接
+	 * <p>开启事务</p>
+	 * @author: zzs
+	 * @date: 2019年11月3日 上午11:03:24
+	 * @return: void
+	 * @throws Exception 
+	 */
+	public static void startTrasaction() throws SQLException {
+		getConnection().setAutoCommit(false);
+	}
+
+	/**
+	 * 
+	 * <p>提交事务</p>
+	 * @author: zzs
+	 * @date: 2019年11月3日 上午11:05:54
+	 * @return: void
+	 */
+	public static void commit() {
+		Connection connection = tl.get();
+		if(connection != null) {
+			try {
+				connection.commit();
+				connection.setAutoCommit(true);
+			} catch(SQLException e) {
+				log.error("提交事务失败", e);
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * <p>回滚事务</p>
+	 * @author: zzs
+	 * @date: 2019年11月3日 上午11:08:12
+	 * @return: void
+	 */
+	public static void rollback() {
+		Connection connection = tl.get();
+		if(connection != null) {
+			try {
+				connection.rollback();
+				connection.setAutoCommit(true);
+			} catch(SQLException e) {
+				log.error("回滚事务失败", e);
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * <p>创建数据库连接</p>
 	 * @author: zzs
 	 * @date: 2019年8月31日 下午9:27:03
 	 * @return: Connection
+	 * @throws SQLException 
 	 */
-	private static Connection createConnection(){ 
+	private static Connection createConnection() throws SQLException {
 		Connection conn = null;
-		//获得连接
-		try {
-			conn = dataSource.getConnection();
-		} catch (SQLException e) {
-			System.err.println("从数据源获取连接失败");
-			e.printStackTrace();
-		}
+		// 获得连接
+		conn = dataSource.getConnection();
 		return conn;
 	}
-	
+
 	/**
-	 * @Title: init
-	 * @Description: 根据指定配置文件创建数据源对象
+	 * <p>根据指定配置文件创建数据源对象</p>
 	 * @author: zzs
 	 * @date: 2019年9月1日 上午10:53:05
 	 * @return: void
 	 */
 	private static void init() {
-		//配置文件名为c3p0-config.xml，构造不需要传入参数。
+		// 配置文件名为c3p0.properties，会自动加载。
 		dataSource = new ComboPooledDataSource();
 	}
 }
-

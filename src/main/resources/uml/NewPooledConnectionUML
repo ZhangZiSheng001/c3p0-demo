@@ -1,0 +1,24 @@
+@startuml
+class NewPooledConnection{
+    ~Connection physicalConnection
+    ~NewProxyConnection exposedProxy
+    +Connection getConnection()
+}
+abstract class AbstractC3P0PooledConnection
+interface PooledConnection
+
+NewPooledConnection -up-|> AbstractC3P0PooledConnection
+AbstractC3P0PooledConnection .up.|> PooledConnection
+
+class NewProxyConnection{
+    #Connection inner
+    ~NewPooledConnection parentPooledConnection
+    ~ConnectionEventListener cel
+}
+interface Connection
+interface C3P0ProxyConnection
+C3P0ProxyConnection -up-|> Connection
+NewProxyConnection .up.|> C3P0ProxyConnection
+
+NewProxyConnection *-- NewPooledConnection
+@enduml

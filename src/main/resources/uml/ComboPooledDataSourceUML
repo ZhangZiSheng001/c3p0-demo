@@ -1,0 +1,34 @@
+@startuml
+class ComboPooledDataSource
+abstract class AbstractComboPooledDataSource 
+abstract class AbstractPoolBackedDataSource
+class PoolBackedDataSourceBase
+interface IdentityTokenized
+interface ConnectionPoolDataSource
+class C3P0PooledConnectionPoolManager
+interface PooledDataSource
+interface DataSource
+class DriverManagerDataSource
+class WrapperConnectionPoolDataSource
+
+note top of ConnectionPoolDataSource
+<size:14>传入的是实现类：</size>
+<size:14><b>WrapperConnectionPoolDataSource</b></size>
+end note
+
+ComboPooledDataSource -up-> AbstractComboPooledDataSource
+AbstractComboPooledDataSource -up-> AbstractPoolBackedDataSource
+AbstractPoolBackedDataSource -up-> PoolBackedDataSourceBase
+PoolBackedDataSourceBase .up.> IdentityTokenized
+
+ConnectionPoolDataSource -right-* PoolBackedDataSourceBase
+ConnectionPoolDataSource -up-* C3P0PooledConnectionPoolManager
+C3P0PooledConnectionPoolManager -right-* AbstractPoolBackedDataSource
+AbstractPoolBackedDataSource .up.> PooledDataSource
+PooledDataSource -up-> DataSource
+DriverManagerDataSource -right-* AbstractComboPooledDataSource
+DriverManagerDataSource -right-* WrapperConnectionPoolDataSource
+WrapperConnectionPoolDataSource -right-* AbstractComboPooledDataSource
+WrapperConnectionPoolDataSource .up.> ConnectionPoolDataSource
+
+@enduml
