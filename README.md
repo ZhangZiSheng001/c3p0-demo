@@ -445,7 +445,7 @@ c3p0.testConnectionOnCheckout=false
 
 ## 缓存语句
 
-针对大部分数据库而言，开启缓存语句可以有效提高性能。
+`PSCache`对支持游标的数据库性能提升巨大，比如说oracle。在`mysql`下建议关闭。
 
 ```properties
 # 所有连接PreparedStatement的最大总数量。是JDBC定义的标准参数，c3p0建议使用自带的maxStatementsPerConnection
