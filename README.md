@@ -544,7 +544,7 @@ c3p0.privilegeSpawnedThreads=false
 
 我们使用`c3p0`时，一般会以`ComboPooledDataSource`这个类为入口，那么就从这个类展开吧。首先，看下`ComboPooledDataSource`的`UML`图。
 
-![ComboPooledDataSource的类继承图](https://github.com/ZhangZiSheng001/c3p0-demo/tree/master/img/ComboPooledDataSource.png)
+![ComboPooledDataSource的UML图](https://img2018.cnblogs.com/blog/1731892/201912/1731892-20191222180900393-123322763.png)
 
 下面重点说下几个类的作用：
 
@@ -673,7 +673,7 @@ public class PoolBackedDataSourceBase extends IdentityTokenResolvable implements
 
 前面已经讲过，`DriverManagerDataSource`可以用来获取原生的连接对象，所以它的功能有点类似于`JDBC`的`DriverManager`。
 
-![DriverManagerDataSource的UML图](https://github.com/ZhangZiSheng001/c3p0-demo/tree/master/img/DriverManagerDataSource.png)
+![DriverManagerDataSource的UML图](https://img2018.cnblogs.com/blog/1731892/201912/1731892-20191222180931672-1099534445.png)
 
 创建`DriverManagerDataSource`实例主要做了三件事，如下：
 
@@ -696,7 +696,7 @@ public class PoolBackedDataSourceBase extends IdentityTokenResolvable implements
 
 下面再看看`WrapperConnectionPoolDataSource`，它可以用来获取`PooledConnection`。
 
-![WrapperConnectionPoolDataSource的UML图](https://github.com/ZhangZiSheng001/c3p0-demo/tree/master/img/WrapperConnectionPoolDataSource.png)
+![WrapperConnectionPoolDataSource的UML图](https://img2018.cnblogs.com/blog/1731892/201912/1731892-20191222180953440-1170651369.png)
 
 创建`WrapperConnectionPoolDataSource`，主要做了以下三件件事：
 
@@ -726,7 +726,7 @@ public class PoolBackedDataSourceBase extends IdentityTokenResolvable implements
 
 我们先来看看这两个类(注意，图中的类展示的只是部分的属性和方法)：
 
-![C3P0PooledConnectionPoolManager和C3P0PooledConnectionPool的UML图](https://github.com/ZhangZiSheng001/c3p0-demo/tree/master/img/C3P0PooledConnectionPoolManager.png)
+![C3P0PooledConnectionPoolManager和C3P0PooledConnectionPool的UML图](https://img2018.cnblogs.com/blog/1731892/201912/1731892-20191222181013669-267545913.png)
 
 下面介绍下这几个类：
 
