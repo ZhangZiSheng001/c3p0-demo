@@ -1110,6 +1110,6 @@ public class PoolBackedDataSourceBase extends IdentityTokenResolvable implements
 
 c3p0 - JDBC3 Connection and Statement Pooling  by Steve Waldman 
 
+> 相关源码请移步：https://github.com/ZhangZiSheng001/c3p0-demo
 
-
->本文为原创文章，转载请附上原文出处链接：https://github.com/ZhangZiSheng001/c3p0-demo
+> 本文为原创文章，转载请附上原文出处链接：https://www.cnblogs.com/ZhangZiSheng001/p/12080533.html
