@@ -10,7 +10,7 @@
   * [编写c3p0.properties](#编写c3p0properties)
   * [获取连接池和获取连接](#获取连接池和获取连接)
   * [编写测试类](#编写测试类)
-* [使用例子-通过`JNDI`获取数据源](#使用例子-通过jndi获取数据源)
+* [使用例子-通过JNDI获取数据源](#使用例子-通过jndi获取数据源)
   * [需求](#需求-1)
   * [引入依赖](#引入依赖-1)
   * [编写context.xml](#编写contextxml)
@@ -44,7 +44,6 @@
     * [PooledConnectionResourcePoolManager.acquireResource()](#pooledconnectionresourcepoolmanageracquireresource)
     * [WrapperConnectionPoolDataSource.getPooledConnection(String, String, ConnectionCustomizer, String)](#wrapperconnectionpooldatasourcegetpooledconnectionstring-string-connectioncustomizer-string)
 * [参考资料](#参考资料)
-
 
 
 
@@ -190,7 +189,7 @@ c3p0.minPoolSize=3
 
 ```java
 	@Test
-	public void save() {
+	public void save() throws SQLException {
 		// 创建sql
 		String sql = "insert into demo_user values(null,?,?,?,?,?)";
 		Connection connection = null;
@@ -199,7 +198,7 @@ c3p0.minPoolSize=3
 			// 获得连接
 			connection = JDBCUtil.getConnection();
 			// 开启事务设置非自动提交
-			JDBCUtil.startTrasaction();
+			connection.setAutoCommit(false);
 			// 获得Statement对象
 			statement = connection.prepareStatement(sql);
 			// 设置参数
@@ -211,17 +210,14 @@ c3p0.minPoolSize=3
 			// 执行
 			statement.executeUpdate();
 			// 提交事务
-			JDBCUtil.commit();
-		} catch(Exception e) {
-			JDBCUtil.rollback();
-			log.error("保存用户失败", e);
+			connection.commit();
 		} finally {
 			// 释放资源
 			JDBCUtil.release(connection, statement, null);
 		}
 	}
 ```
-# 使用例子-通过`JNDI`获取数据源
+# 使用例子-通过JNDI获取数据源
 
 ## 需求
 

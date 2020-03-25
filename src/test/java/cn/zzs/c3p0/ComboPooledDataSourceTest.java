@@ -10,8 +10,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import com.mchange.v2.c3p0.impl.C3P0ImplUtils;
-
 /**
  * <p>测试使用JDBCUtil获取连接并操作数据库</p>
  * @author: zzs
@@ -19,13 +17,12 @@ import com.mchange.v2.c3p0.impl.C3P0ImplUtils;
  */
 public class ComboPooledDataSourceTest {
 
-	private static final Log log = LogFactory.getLog(ComboPooledDataSourceTest.class);
-
 	/**
 	 * 测试添加用户
+	 * @throws SQLException 
 	 */
 	@Test
-	public void save() {
+	public void save() throws SQLException {
 		// 创建sql
 		String sql = "insert into demo_user values(null,?,?,?,?,?)";
 		Connection connection = null;
@@ -34,7 +31,7 @@ public class ComboPooledDataSourceTest {
 			// 获得连接
 			connection = JDBCUtil.getConnection();
 			// 开启事务设置非自动提交
-			JDBCUtil.startTrasaction();
+			connection.setAutoCommit(false);
 			// 获得Statement对象
 			statement = connection.prepareStatement(sql);
 			// 设置参数
@@ -46,10 +43,7 @@ public class ComboPooledDataSourceTest {
 			// 执行
 			statement.executeUpdate();
 			// 提交事务
-			JDBCUtil.commit();
-		} catch(Exception e) {
-			JDBCUtil.rollback();
-			log.error("保存用户失败", e);
+			connection.commit();
 		} finally {
 			// 释放资源
 			JDBCUtil.release(connection, statement, null);
@@ -58,9 +52,10 @@ public class ComboPooledDataSourceTest {
 
 	/**
 	 * 测试更新用户
+	 * @throws SQLException 
 	 */
 	@Test
-	public void update() {
+	public void update() throws SQLException {
 		// 创建sql
 		String sql = "update demo_user set age = ?,gmt_modified = ? where name = ?";
 		Connection connection = null;
@@ -69,7 +64,7 @@ public class ComboPooledDataSourceTest {
 			// 获得连接
 			connection = JDBCUtil.getConnection();
 			// 开启事务
-			JDBCUtil.startTrasaction();
+			connection.setAutoCommit(false);
 			// 获得Statement对象
 			statement = connection.prepareStatement(sql);
 			// 设置参数
@@ -79,10 +74,7 @@ public class ComboPooledDataSourceTest {
 			// 执行
 			statement.executeUpdate();
 			// 提交事务
-			JDBCUtil.commit();
-		} catch(Exception e) {
-			log.error("异常导致操作回滚", e);
-			JDBCUtil.rollback();
+			connection.commit();
 		} finally {
 			// 释放资源
 			JDBCUtil.release(connection, statement, null);
@@ -91,9 +83,10 @@ public class ComboPooledDataSourceTest {
 
 	/**
 	 * 测试查找用户
+	 * @throws SQLException 
 	 */
 	@Test
-	public void findAll() {
+	public void findAll() throws SQLException {
 		// 创建sql
 		String sql = "select * from demo_user where deleted = false";
 		Connection connection = null;
@@ -112,8 +105,6 @@ public class ComboPooledDataSourceTest {
 				int age = resultSet.getInt(3);
 				System.out.println("用户名：" + name + ",年龄：" + age);
 			}
-		} catch(SQLException e) {
-			log.error("查询用户异常", e);
 		} finally {
 			// 释放资源
 			JDBCUtil.release(connection, statement, resultSet);
@@ -133,7 +124,7 @@ public class ComboPooledDataSourceTest {
 			// 获得连接
 			connection = JDBCUtil.getConnection();
 			// 设置非自动提交
-			JDBCUtil.startTrasaction();
+			connection.setAutoCommit(false);
 			// 获得Statement对象
 			statement = connection.prepareStatement(sql);
 			// 设置参数
@@ -141,10 +132,7 @@ public class ComboPooledDataSourceTest {
 			// 执行
 			statement.executeUpdate();
 			// 提交事务
-			JDBCUtil.commit();
-		} catch(Exception e) {
-			log.error("异常导致操作回滚", e);
-			JDBCUtil.rollback();
+			connection.commit();
 		} finally {
 			// 释放资源
 			JDBCUtil.release(connection, statement, null);
