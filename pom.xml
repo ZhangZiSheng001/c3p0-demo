@@ -2,11 +2,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.zzs.c3p0</groupId>
-    <artifactId>C3P0-demo</artifactId>
+    <artifactId>c3p0-demo</artifactId>
     <packaging>war</packaging>
     <version>1.0.0</version>
-    <name>C3P0-demo</name>
-    <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
